@@ -1,6 +1,6 @@
 # PokerApp
 
-PokerApp is a simple Node.js console app which draws as many hands as you want from 52 cards. PokerApp can only recognize single pair, two pairs, flush, straight and straight flush.
+PokerApp is a simple Node.js console app which draws as many hands as you want from 52 cards. PokerApp can only recognize single pair, two pairs, three of kind, straight, flush, full house, four of kind and straight flush.
 
 ## Installation
 

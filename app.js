@@ -16,7 +16,7 @@ const analyzeHand = (hand) => {
         rank = 4;
         let checkIfStraightFlush = flush(hand);
         if (checkIfStraightFlush > 0) {
-            rank = 5;
+            rank = 8;
             return rank;
         } else {
             return rank;
@@ -24,14 +24,17 @@ const analyzeHand = (hand) => {
     } else if (rank == 5) {
         return rank;
     } else {
-        rank = twoPairs(hand);
+        rank = sameCards(hand);
         if (rank < 1) {
             let isFlush = flush(hand);
             if (isFlush > 0) {
-                rank = 3;
+                rank = 5;
                 return rank;
             }
             rank = 0;
+            return rank;
+        } else if (rank == 4) {
+            rank = 7;
             return rank;
         } else {
             return rank;
@@ -44,17 +47,19 @@ const drawHand = (hands) => {
     for (i = 0; i < hands; i++) {
         let hand = random();
         let result = analyzeHand(hand);
-        let rank = ["Nothing", "Single Pair", "Two Pairs", "Flush", "Straight", "Straight Flush"];
-        console.log("Hand " + i + ":" + hand + ", you had: " + rank[result]);
+        let rank = ["Nothing", "Single Pair", "Two Pairs", "Three of Kind", "Straight", "Flush", "Full House", "Four of Kind", "Straight Flush"];
+        console.log("Hand " + (i+1) + ":" + hand + ", you had: " + rank[result]);
     }
 }
 
 const splitOn = (slicable, ...indices) =>
     [0, ...indices].map((n, i, m) => slicable.slice(n, m[i + 1]));
 
-const twoPairs = (hand) => {
+const sameCards = (hand) => {
     let value = [];
     let suits = [];
+    let hasPair = false;
+    let hasTreble = false;
 
     for (let i = 0; i < hand.length; i++) {
         let split = splitOn(hand[i], 1);
@@ -64,14 +69,24 @@ const twoPairs = (hand) => {
 
     let current = null;
     let cnt = 0;
-    let twoPairs = 0;
+    let result = 0;
     value.sort();
     for (var i = 0; i < value.length; i++) {
         if (value[i] != current) {
             if (cnt > 0) {
-                if (cnt == 2) {
-                    twoPairs++;
-                }
+                if (cnt == 2 && hasTreble == false) {
+                    result++;
+                    hasPair = true;
+                } else if (cnt == 2 && hasTreble == true) {
+                    result = 6;
+                } else if (cnt == 3 && hasPair == true) {
+                    result = 6;
+                } else if (cnt == 3 && hasPair == false) {
+                    result = 3;
+                    hasTreble = true;
+                } else if (cnt == 4) {
+                    result = 4;
+                } 
             }
             current = value[i];
             cnt = 1;
@@ -80,11 +95,22 @@ const twoPairs = (hand) => {
         }
     }
     if (cnt > 0) {
-        if (cnt == 2) {
-            twoPairs++;
-        }
+        if (cnt == 2 && hasTreble == false) {
+            result++;
+            hasPair = true;
+        } else if (cnt == 2 && hasTreble == true) {
+            result = 6;
+        } else if (cnt == 3 && hasPair == true) {
+            result = 6;
+        } else if (cnt == 3 && hasPair == false) {
+            result = 3;
+            hasTreble = true;
+        } else if (cnt == 4) {
+            result = 4;
+        } 
     }
-    return twoPairs;
+
+    return result;
 
 }
 
